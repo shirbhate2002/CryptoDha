@@ -1,6 +1,7 @@
 package dev.vaidilya.cryptodha
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -29,7 +30,8 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
-import dev.vaidilya.cryptodha.data.remote.CryptoService
+import dev.vaidilya.cryptodha.data.model.CryptoListItem
+import dev.vaidilya.cryptodha.data.remote.CoingeckoService
 import dev.vaidilya.cryptodha.feature.detail.DetailScreen
 import dev.vaidilya.cryptodha.feature.detail.DetailViewModel
 import dev.vaidilya.cryptodha.feature.holdings.HoldingsScreen
@@ -38,6 +40,7 @@ import dev.vaidilya.cryptodha.feature.home.HomeViewModel
 import dev.vaidilya.cryptodha.feature.profile.ProfileScreen
 import dev.vaidilya.cryptodha.ui.theme.CryptoDhaTheme
 import kotlinx.serialization.Serializable
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -52,7 +55,7 @@ enum class BottomNavDestinations(val label: String, val icon: ImageVector) {
 }
 
 @Serializable object Home : ScreenDestinations()
-@Serializable data class CryptoDetail(val cryptoName: String) : ScreenDestinations()
+@Serializable data class CryptoDetail(val cryptoData: CryptoListItem) : ScreenDestinations()
 @Serializable object Holdings : ScreenDestinations()
 @Serializable object Profile : ScreenDestinations()
 
@@ -61,12 +64,26 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://rest.coincap.io/v3/")
-            .addConverterFactory(GsonConverterFactory.create())
+        val okHttpClient = OkHttpClient.Builder()
+            .addInterceptor { chain ->
+                val request = chain.request().newBuilder()
+                    .addHeader("x-cg-demo-api-key", "")
+                    .build()
+                val start = System.currentTimeMillis()
+                val response = chain.proceed(request)
+                val duration = System.currentTimeMillis() - start
+                Log.d("OkHttp", "${request.url} -> ${response.code} in ${duration}ms")
+                response
+            }
             .build()
 
-        val cryptoService = retrofit.create(CryptoService::class.java)
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://api.coingecko.com/api/v3/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(okHttpClient)
+            .build()
+
+        val cryptoService = retrofit.create(CoingeckoService::class.java)
 
         setContent {
             CryptoDhaTheme {
@@ -113,7 +130,7 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                             entry<CryptoDetail> {
-                                val vm = remember { DetailViewModel(it.cryptoName, cryptoService) }
+                                val vm = remember { DetailViewModel(it.cryptoData, cryptoService) }
                                 DetailScreen(viewModel = vm)
                             }
                             entry<Holdings> { HoldingsScreen() }

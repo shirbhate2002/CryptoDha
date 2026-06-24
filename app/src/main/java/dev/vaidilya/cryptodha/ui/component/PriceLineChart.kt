@@ -18,50 +18,50 @@ import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerRangeProvider
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
-import dev.vaidilya.cryptodha.data.model.PriceHistory
 
-@Composable
-fun PriceLineChart(
-    priceHistory: List<PriceHistory>,
-    modifier: Modifier = Modifier
-) {
-    val modelProducer = remember { CartesianChartModelProducer() }
-    val minPrice = priceHistory.minOfOrNull { it.priceUsd } ?: 0f
-    val maxPrice = priceHistory.maxOfOrNull { it.priceUsd } ?: 1f
-    val padding = (maxPrice - minPrice) * 0.01f
 
-    LaunchedEffect(priceHistory) {
-        if (priceHistory.isNotEmpty()) {
-            modelProducer.runTransaction {
-                lineSeries { series(priceHistory.map { it.priceUsd }) }
-            }
-        }
-    }
-
-    CartesianChartHost(
-        chart = rememberCartesianChart(
-            rememberLineCartesianLayer(
-                rangeProvider = CartesianLayerRangeProvider.fixed(
-                    minY = (minPrice - padding).toDouble(),
-                    maxY = (maxPrice + padding).toDouble()
-                )
-            ),
-            startAxis = VerticalAxis.rememberStart(),
-            bottomAxis = HorizontalAxis.rememberBottom(),
-        ),
-        modelProducer = modelProducer,
-        modifier = modifier.fillMaxWidth().height(250.dp)
-    )
-}
-
-@Preview
-@Composable
-fun PreviewPriceLineChart() {
-    PriceLineChart(
-        priceHistory = listOf(
-            PriceHistory(1700000000000L, 36000.0f),
-            PriceHistory(1700003600000L, 36450.5f),
-            PriceHistory(1700007200000L, 35980.0f),
-        )
-    )
-}
+//@Composable
+//fun PriceLineChart(
+//    priceHistory: List<PriceHistory>,
+//    modifier: Modifier = Modifier
+//) {
+//    val modelProducer = remember { CartesianChartModelProducer() }
+//    val minPrice = priceHistory.minOfOrNull { it.priceUsd } ?: 0f
+//    val maxPrice = priceHistory.maxOfOrNull { it.priceUsd } ?: 1f
+//    val padding = (maxPrice - minPrice) * 0.01f
+//
+//    LaunchedEffect(priceHistory) {
+//        if (priceHistory.isNotEmpty()) {
+//            modelProducer.runTransaction {
+//                lineSeries { series(priceHistory.map { it.priceUsd }) }
+//            }
+//        }
+//    }
+//
+//    CartesianChartHost(
+//        chart = rememberCartesianChart(
+//            rememberLineCartesianLayer(
+//                rangeProvider = CartesianLayerRangeProvider.fixed(
+//                    minY = (minPrice - padding).toDouble(),
+//                    maxY = (maxPrice + padding).toDouble()
+//                )
+//            ),
+//            startAxis = VerticalAxis.rememberStart(),
+//            bottomAxis = HorizontalAxis.rememberBottom(),
+//        ),
+//        modelProducer = modelProducer,
+//        modifier = modifier.fillMaxWidth().height(250.dp)
+//    )
+//}
+//
+//@Preview
+//@Composable
+//fun PreviewPriceLineChart() {
+//    PriceLineChart(
+//        priceHistory = listOf(
+//            PriceHistory(1700000000000L, 36000.0f),
+//            PriceHistory(1700003600000L, 36450.5f),
+//            PriceHistory(1700007200000L, 35980.0f),
+//        )
+//    )
+//}

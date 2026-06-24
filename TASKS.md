@@ -135,6 +135,8 @@ Also add KSP plugin to both `build.gradle.kts` (project level) and `app/build.gr
 
 ## Good to have features
 - [ ] Zoom and pan of Graph
+- [ ] add pagenation to the Home screen.
+- [ ] 
 
 ---
 

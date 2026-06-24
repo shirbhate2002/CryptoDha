@@ -17,7 +17,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
@@ -37,13 +36,13 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.painter.BrushPainter
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import dev.vaidilya.cryptodha.core.UiState
-import dev.vaidilya.cryptodha.data.model.CryptoDetailResponse
-import dev.vaidilya.cryptodha.data.model.CryptoPriceList
+import dev.vaidilya.cryptodha.core.formateToCompactNumber
+import dev.vaidilya.cryptodha.data.model.CryptoChartData
+import dev.vaidilya.cryptodha.data.model.CryptoListItem
 
 @Composable
 fun DetailScreen(
@@ -61,7 +60,7 @@ fun DetailScreen(
     ) {
         when (uiState) {
             is UiState.Success<*> -> DetailContent(
-                data = (uiState as UiState.Success<CryptoDetailResponse>).data,
+                data = (uiState as UiState.Success<CryptoListItem>).data,
                 priceList,
                 {
                     viewModel.getPriceWithInterval(it)
@@ -75,7 +74,7 @@ fun DetailScreen(
 
 @Composable
 fun DetailContent(
-    data: CryptoDetailResponse,
+    data: CryptoListItem,
     price:UiState,
     onIntervalChange:(String)-> Unit,
     modifier: Modifier = Modifier
@@ -108,18 +107,18 @@ fun DetailContent(
                 .padding(horizontal = 8.dp, vertical = 8.dp)
                 .verticalScroll(rememberScrollState())
         ) {
-            Text(data.data.name, style = MaterialTheme.typography.headlineLarge)
+            Text(data.name, style = MaterialTheme.typography.headlineLarge)
             Row(verticalAlignment = Alignment.Bottom) {
-                Text(data.data.priceUsd, style = MaterialTheme.typography.displayMedium)
+                Text(data.current_price.toString(), style = MaterialTheme.typography.displayMedium)
                 Text("USD", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(8.dp))
             }
-            val isNegative=(data.data.changePercent24Hr[0] == '-');
+            val isNegative=(data.price_change_percentage_24h.toString()[0] == '-');
             Row(
                 Modifier.padding(top = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 val indColor = if (isNegative) Color.Red else Color.Green
-                val per = (if (isNegative) "▼ " else "▲ ")+data.data.changePercent24Hr.substring(1, 4)
+                val per = (if (isNegative) "▼ " else "▲ ")+data.price_change_percentage_24h.toString().substring(1, 4)
                 Text(
                     text = per,
                     modifier = Modifier
@@ -129,15 +128,15 @@ fun DetailContent(
                         )
                         .padding(horizontal = 6.dp, vertical = 2.dp)
                 )
-                Text(
-                    text = "VWAP $ ${data.data.vwap24Hr}",
-                    modifier = Modifier.padding(start = 12.dp),
-                    style = MaterialTheme.typography.bodyLarge
-                )
+//                Text(
+//                    text = "VWAP $ ${data.data.vwap24Hr}",
+//                    modifier = Modifier.padding(start = 12.dp),
+//                    style = MaterialTheme.typography.bodyLarge
+//                )
             }
             PriceChart(price,onIntervalChange)
-            StatCard(label = "Market Cap", value = data.data.marketCapUsd)
-            StatCard(label = "24h Volume", value = data.data.volumeUsd24Hr)
+            StatCard(label = "Market Cap", value = formateToCompactNumber("%.0f".format(data.market_cap)))
+            StatCard(label = "24h Volume", value = formateToCompactNumber("%.0f".format(data.market_cap_change_24h)))
 //            Card(
 //                modifier = Modifier
 //                    .fillMaxWidth()
@@ -173,8 +172,8 @@ private fun PriceChart(
 ) {
     when (price) {
         is UiState.Success<*> -> {
-            val data=(price as UiState.Success<CryptoPriceList>).data
-            Log.d("ß", "PriceChart: ${data.data.size}")
+            val data=(price as UiState.Success<CryptoChartData>).data
+            Log.d("Price Data recevied!!", "PriceChart: ${data.prices.size}")
             Canvas(
                 Modifier
                     .height(240.dp)
@@ -183,7 +182,7 @@ private fun PriceChart(
             ) {
                 val width = size.width
                 val height = size.height
-                val dataPoints = data.data.map { it.priceUsd.toDoubleOrNull() ?: 0.0 }
+                val dataPoints = data.prices.map{it[1]}
                 val minVal = dataPoints.min()
                 val maxVal = dataPoints.max()
                 val range = (maxVal - minVal).takeIf { it > 0 } ?: 1.0
@@ -222,25 +221,22 @@ private fun PriceChart(
             }
         }
     }
-    var selectedIndex by remember { mutableStateOf(2) }
-    val options = listOf("m15", "m30", "h1", "h6", "d1")
+    var selectedIndex by remember { mutableStateOf(0) }
+    val options = listOf("1D","2D","7D","15D","30D","60D")
     SingleChoiceSegmentedButtonRow {
         options.forEachIndexed { index, label->
             SegmentedButton(
                 shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
                 onClick = {
                     selectedIndex = index
-                    onIntervalChange(options[index])
-                      },
+                    onIntervalChange(options[index].removeSuffix("D"))
+                          },
                 selected = index == selectedIndex
             ) {
                 Text(label)
             }
         }
     }
-//    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-//        listOf().forEach { Text(it) }
-//    }
 }
 
 @Composable
