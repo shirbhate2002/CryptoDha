@@ -78,8 +78,8 @@ fun CryptoCard(crypto: CryptoListItem, onSelect: (CryptoListItem) -> Unit) {
                 }
             }
             Column(horizontalAlignment = AbsoluteAlignment.Right) {
-                Text(formatCryptoPrice(crypto.current_price.toString()))
-                val price_change=crypto.price_change_percentage_24h.toString();
+                Text(formatCryptoPrice(crypto.currentPrice.toString()))
+                val price_change=crypto.priceChangePercentage24h.toString();
                 val isNegative=(price_change[0] == '-');
                 Text("$price_change %", color = (if(isNegative) Color.Red else Color(0xFF008000)))
             }

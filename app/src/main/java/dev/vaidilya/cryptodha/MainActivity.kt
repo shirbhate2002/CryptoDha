@@ -26,12 +26,17 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
+import androidx.room.Room
+import dev.vaidilya.cryptodha.data.local.AppDatabase
+import dev.vaidilya.cryptodha.data.local.PortfolioPreferences
 import dev.vaidilya.cryptodha.data.model.CryptoListItem
 import dev.vaidilya.cryptodha.data.remote.CoingeckoService
+import dev.vaidilya.cryptodha.data.repository.PortfolioRepository
 import dev.vaidilya.cryptodha.feature.detail.DetailScreen
 import dev.vaidilya.cryptodha.feature.detail.DetailViewModel
 import dev.vaidilya.cryptodha.feature.holdings.HoldingsScreen
@@ -39,6 +44,7 @@ import dev.vaidilya.cryptodha.feature.home.HomeScreen
 import dev.vaidilya.cryptodha.feature.home.HomeViewModel
 import dev.vaidilya.cryptodha.feature.profile.ProfileScreen
 import dev.vaidilya.cryptodha.ui.theme.CryptoDhaTheme
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -64,26 +70,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        val okHttpClient = OkHttpClient.Builder()
-            .addInterceptor { chain ->
-                val request = chain.request().newBuilder()
-                    .addHeader("x-cg-demo-api-key", "")
-                    .build()
-                val start = System.currentTimeMillis()
-                val response = chain.proceed(request)
-                val duration = System.currentTimeMillis() - start
-                Log.d("OkHttp", "${request.url} -> ${response.code} in ${duration}ms")
-                response
-            }
-            .build()
+        val appContainer = (application as CryptoDhaApplication).appContainer
+        val cryptoService = appContainer.cryptoService
+        val portfolioRepository = appContainer.portfolioRepository
 
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://api.coingecko.com/api/v3/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(okHttpClient)
-            .build()
-
-        val cryptoService = retrofit.create(CoingeckoService::class.java)
+        lifecycleScope.launch {
+            portfolioRepository.buyAsset("bitcoin","Bitcoin",100.0)
+        }
 
         setContent {
             CryptoDhaTheme {

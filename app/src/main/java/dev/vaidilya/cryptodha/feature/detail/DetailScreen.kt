@@ -109,16 +109,16 @@ fun DetailContent(
         ) {
             Text(data.name, style = MaterialTheme.typography.headlineLarge)
             Row(verticalAlignment = Alignment.Bottom) {
-                Text(data.current_price.toString(), style = MaterialTheme.typography.displayMedium)
+                Text(data.currentPrice.toString(), style = MaterialTheme.typography.displayMedium)
                 Text("USD", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(8.dp))
             }
-            val isNegative=(data.price_change_percentage_24h.toString()[0] == '-');
+            val isNegative=(data.priceChangePercentage24h.toString()[0] == '-');
             Row(
                 Modifier.padding(top = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 val indColor = if (isNegative) Color.Red else Color.Green
-                val per = (if (isNegative) "▼ " else "▲ ")+data.price_change_percentage_24h.toString().substring(1, 4)
+                val per = (if (isNegative) "▼ " else "▲ ")+data.priceChangePercentage24h.toString().substring(1, 4)
                 Text(
                     text = per,
                     modifier = Modifier
@@ -135,8 +135,8 @@ fun DetailContent(
 //                )
             }
             PriceChart(price,onIntervalChange)
-            StatCard(label = "Market Cap", value = formateToCompactNumber("%.0f".format(data.market_cap)))
-            StatCard(label = "24h Volume", value = formateToCompactNumber("%.0f".format(data.market_cap_change_24h)))
+            StatCard(label = "Market Cap", value = formateToCompactNumber("%.0f".format(data.marketCap)))
+            StatCard(label = "24h Volume", value = formateToCompactNumber("%.0f".format(data.marketCapChange24h)))
 //            Card(
 //                modifier = Modifier
 //                    .fillMaxWidth()

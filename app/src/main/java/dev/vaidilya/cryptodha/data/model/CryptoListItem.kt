@@ -1,5 +1,6 @@
 package dev.vaidilya.cryptodha.data.model
 
+import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -8,8 +9,12 @@ data class CryptoListItem(
     val symbol: String,
     val name: String,
     val image: String,
-    val current_price: Double,
-    val price_change_percentage_24h: Double,
-    val market_cap : Double,
-    val market_cap_change_24h : Double
+    @SerializedName("current_price")
+    val currentPrice: Double,
+    @SerializedName("price_change_percentage_24h")
+    val priceChangePercentage24h: Double,
+    @SerializedName("market_cap")
+    val marketCap : Double,
+    @SerializedName("market_cap_change_24h")
+    val marketCapChange24h : Double
 )

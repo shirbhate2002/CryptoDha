@@ -27,15 +27,15 @@ Users start with $10,000 virtual USD and can buy/sell real cryptocurrencies at l
 > Must be done before Phase 3, 4, 5.
 
 | # | Task | Files | Notes | Status |
-|---|------|-------|-------|-------|
-| F1 | Add Room + KSP + Coroutines to gradle | `app/build.gradle.kts` | Add `room-runtime`, `room-ktx`, `room-compiler` (KSP), `kotlinx-coroutines-android` | ⏳|
-| F2 | Define `HoldingEntity` + `TradeEntity` | `data/local/entity/HoldingEntity.kt`, `TradeEntity.kt` | Holding: cryptoId, name, symbol, amountHeld, avgBuyPrice. Trade: cryptoId, type(BUY/SELL), amount, priceAtTrade, timestamp |
-| F3 | Create DAOs | `data/local/dao/HoldingDao.kt`, `TradeDao.kt` | CRUD for holdings, insert trades, query by cryptoId |
-| F4 | Create `AppDatabase` | `data/local/AppDatabase.kt` | Room singleton with both entities + DAOs |
-| F5 | `PortfolioPreferences` | `data/local/PortfolioPreferences.kt` | SharedPreferences wrapper — stores cash balance (default $10,000) |
-| F6 | `PortfolioRepository` | `data/repository/PortfolioRepository.kt` | `buyAsset()`, `sellAsset()`, `resetPortfolio()` — all atomic via Room `withTransaction` |
-| F7 | `AppContainer` + `CryptoDhaApplication` | `CryptoDhaApplication.kt`, `AppContainer.kt` | Manual DI: holds Retrofit, CryptoService, AppDatabase, Repository singletons |
-| F8 | Wire `AppContainer` into `MainActivity` | `MainActivity.kt` | Replace inline `retrofit.create()` calls with `appContainer` references |
+|---|------|-------|-------|--------|
+| F1 | Add Room + KSP + Coroutines to gradle | `app/build.gradle.kts` | Add `room-runtime`, `room-ktx`, `room-compiler` (KSP), `kotlinx-coroutines-android` | ✅     |
+| F2 | Define `HoldingEntity` + `TradeEntity` | `data/local/entity/HoldingEntity.kt`, `TradeEntity.kt` | Holding: cryptoId, name, symbol, amountHeld, avgBuyPrice. Trade: cryptoId, type(BUY/SELL), amount, priceAtTrade, timestamp |✅|
+| F3 | Create DAOs | `data/local/dao/HoldingDao.kt`, `TradeDao.kt` | CRUD for holdings, insert trades, query by cryptoId |✅|
+| F4 | Create `AppDatabase` | `data/local/AppDatabase.kt` | Room singleton with both entities + DAOs |✅|
+| F5 | `PortfolioPreferences` | `data/local/PortfolioPreferences.kt` | SharedPreferences wrapper — stores cash balance (default $10,000) |✅|
+| F6 | `PortfolioRepository` | `data/repository/PortfolioRepository.kt` | `buyAsset()`, `sellAsset()`, `resetPortfolio()` — all atomic via Room `withTransaction` |⏳|
+| F7 | `AppContainer` + `CryptoDhaApplication` | `CryptoDhaApplication.kt`, `AppContainer.kt` | Manual DI: holds Retrofit, CryptoService, AppDatabase, Repository singletons |✅|
+| F8 | Wire `AppContainer` into `MainActivity` | `MainActivity.kt` | Replace inline `retrofit.create()` calls with `appContainer` references |✅|
 
 ---
 
