@@ -54,10 +54,10 @@ Users start with $10,000 virtual USD and can buy/sell real cryptocurrencies at l
 ### Phase 3 — Buy / Sell Trading
 > Requires F6 (PortfolioRepository).
 
-| # | Task | Files | Notes |
-|---|------|-------|-------|
+| # | Task | Files | Notes | Status|
+|---|------|-------|-------|-------|
 | T1 | Add trade logic to `DetailViewModel` | `feature/detail/DetailViewModel.kt` | `buyAsset(amountUsd)` and `sellAsset(amountCrypto)` methods. Expose `cashBalance` and `currentHolding` as state. |
-| T2 | Create `TradeBottomSheet` | `feature/detail/TradeBottomSheet.kt` | Modal bottom sheet: shows current price, input field (USD for buy / crypto amount for sell), balance info, Confirm button |
+| T2 | Create `TradeBottomSheet` | `feature/detail/TradeBottomSheet.kt` | Modal bottom sheet: shows current price, input field (USD for buy / crypto amount for sell), balance info, Confirm button |⏳|
 | T3 | Wire Buy/Sell buttons | `feature/detail/DetailScreen.kt` | Buy button opens BUY sheet, Sell button opens SELL sheet. Show snackbar on success/failure. |
 
 ---
@@ -136,7 +136,8 @@ Also add KSP plugin to both `build.gradle.kts` (project level) and `app/build.gr
 ## Good to have features
 - [ ] Zoom and pan of Graph
 - [ ] add pagenation to the Home screen.
-- [ ] 
+- [ ] add withTransaction in the room db 
+- [ ] add shot and filter in holding section
 
 ---
 

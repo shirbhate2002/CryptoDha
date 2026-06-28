@@ -5,11 +5,11 @@ import kotlin.math.abs
 fun formatCryptoPrice(priceStr: String): String {
     val price = priceStr.toDoubleOrNull() ?: return priceStr
     return when {
-        price >= 1_000  -> "$ ${"%,.2f".format(price)}"
-        price >= 1      -> "$ ${"%,.4f".format(price)}"
-        price >= 0.01   -> "$ ${"%,.4f".format(price)}"
-        price >= 0.0001 -> "$ ${"%,.6f".format(price)}"
-        else            -> "$ ${"%,.8f".format(price)}"
+        price >= 1_000  -> "${"%,.2f".format(price)} $ "
+        price >= 1      -> "${"%,.4f".format(price)} $ "
+        price >= 0.01   -> "${"%,.4f".format(price)} $ "
+        price >= 0.0001 -> "${"%,.6f".format(price)} $ "
+        else            -> "${"%,.8f".format(price)} $ "
     }
 }
 
@@ -27,9 +27,9 @@ fun formateToCompactNumber(priceStr: String): String{
     }
 
     return if (value % 1.0 == 0.0) {
-        "$ ${value.toLong()}$suffix"
+        "${value.toLong()}$suffix $"
     } else {
-        "$ %.2f%s".format(value, suffix)
+        "%.2f%s $".format(value, suffix)
             .replace(Regex("0+$"), "")
             .replace(Regex("\\.$"), "")
     }

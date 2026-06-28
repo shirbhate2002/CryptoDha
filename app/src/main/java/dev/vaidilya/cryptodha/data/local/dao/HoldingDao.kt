@@ -6,12 +6,13 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import dev.vaidilya.cryptodha.data.local.entity.HoldingEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface HoldingDao{
 
     @Query("SELECT * FROM HoldingEntity")
-    fun getAllHoldings() : List<HoldingEntity>
+    fun getAllHoldings() : Flow<List<HoldingEntity>>
 
     @Query("SELECT * FROM HoldingEntity WHERE coinId= :coinId")
     fun getHoldingByName(coinId: String):HoldingEntity?
@@ -20,6 +21,7 @@ interface HoldingDao{
     //We have to make the quantity plus and avg the value.
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun addHoldings(holding: HoldingEntity)
+
 
     @Delete
     fun removeHoldings(holding: HoldingEntity)

@@ -40,6 +40,7 @@ import dev.vaidilya.cryptodha.data.repository.PortfolioRepository
 import dev.vaidilya.cryptodha.feature.detail.DetailScreen
 import dev.vaidilya.cryptodha.feature.detail.DetailViewModel
 import dev.vaidilya.cryptodha.feature.holdings.HoldingsScreen
+import dev.vaidilya.cryptodha.feature.holdings.HoldingsViewModel
 import dev.vaidilya.cryptodha.feature.home.HomeScreen
 import dev.vaidilya.cryptodha.feature.home.HomeViewModel
 import dev.vaidilya.cryptodha.feature.profile.ProfileScreen
@@ -73,10 +74,6 @@ class MainActivity : ComponentActivity() {
         val appContainer = (application as CryptoDhaApplication).appContainer
         val cryptoService = appContainer.cryptoService
         val portfolioRepository = appContainer.portfolioRepository
-
-        lifecycleScope.launch {
-            portfolioRepository.buyAsset("bitcoin","Bitcoin",100.0)
-        }
 
         setContent {
             CryptoDhaTheme {
@@ -123,10 +120,13 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                             entry<CryptoDetail> {
-                                val vm = remember { DetailViewModel(it.cryptoData, cryptoService) }
+                                val vm = remember { DetailViewModel(it.cryptoData, cryptoService,portfolioRepository)}
                                 DetailScreen(viewModel = vm)
                             }
-                            entry<Holdings> { HoldingsScreen() }
+                            entry<Holdings> {
+                                val vm = remember { HoldingsViewModel(cryptoService,portfolioRepository)}
+                                HoldingsScreen(vm)
+                            }
                             entry<Profile> { ProfileScreen() }
                         }
                     )
